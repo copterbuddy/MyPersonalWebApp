@@ -28,7 +28,7 @@ class Home extends React.Component {
     window.WebServiceMode == "prod"
       ? (endpoint = window.WebServiceEndpoint)
       : (endpoint = window.WebServiceLocal);
-    const url = endpoint + "api/Personal/MyInfo";
+    const url = endpoint + "api/Personal/MyInfo/";
 
     const body = JSON.stringify({
       // Property1: "",
@@ -36,30 +36,36 @@ class Home extends React.Component {
       // PageIndex: this.state.index,
       // PageSize: window.PageSize,
       // Orderby: "",
-      test: "test",
+      Name: "Cop",
     });
 
-    axios.post(url, body).then((response) => {
-      console.log("api response:" + response.data.CizName);
-      if (response.data !== null) {
-        if (this.state.round === 0) {
-          this.setState({
-            JsonResponse: response.data.products,
-            index: 1,
-            round: 1,
-          });
-        } else {
-          let data = this.state.JsonResponse;
-          for (let i = 0; i < response.data.products.length; i++) {
-            data.push({
-              productId: response.data.products[i].productId,
-              productNameEng: response.data.products[i].productNameEng,
+    axios
+      .post(url, body, {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log("api response:" + response.data.CizName);
+        if (response.data !== null) {
+          if (this.state.round === 0) {
+            this.setState({
+              JsonResponse: response.data.products,
+              index: 1,
+              round: 1,
             });
+          } else {
+            let data = this.state.JsonResponse;
+            for (let i = 0; i < response.data.products.length; i++) {
+              data.push({
+                productId: response.data.products[i].productId,
+                productNameEng: response.data.products[i].productNameEng,
+              });
+            }
+            this.setState({ JsonResponse: data, index: this.state.index + 1 });
           }
-          this.setState({ JsonResponse: data, index: this.state.index + 1 });
         }
-      }
-    });
+      });
   }
 
   onClickChange() {
